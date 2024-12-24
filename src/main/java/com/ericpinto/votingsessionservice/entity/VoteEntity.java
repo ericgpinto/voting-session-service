@@ -18,10 +18,8 @@ import java.time.LocalDateTime;
 public class VoteEntity {
     @Id
     private String id;
-    private Boolean isActive;
     private VoteEnum vote;
     @DBRef
-    private AgendaEntity agenda;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private AssociateEntity associate;
+    private LocalDateTime createdAt;
 }
