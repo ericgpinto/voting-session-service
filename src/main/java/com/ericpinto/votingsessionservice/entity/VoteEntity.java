@@ -1,5 +1,6 @@
 package com.ericpinto.votingsessionservice.entity;
 
+import com.ericpinto.votingsessionservice.request.VoteRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,4 +23,12 @@ public class VoteEntity {
     @DBRef
     private AssociateEntity associate;
     private LocalDateTime createdAt;
+
+    public static VoteEntity create(VoteRequest request, AssociateEntity associate){
+        return VoteEntity.builder()
+                .vote(VoteEnum.valueOf(request.vote()))
+                .associate(associate)
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
 }

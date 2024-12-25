@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "agenda")
@@ -26,5 +27,5 @@ public class AgendaEntity {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     @DBRef
-    private List<VoteEntity> voteEntity;
+    private List<VoteEntity> voteEntity = new ArrayList<>();
 }
