@@ -3,6 +3,9 @@ package com.ericpinto.votingsessionservice.service;
 import com.ericpinto.votingsessionservice.entity.AgendaEntity;
 import com.ericpinto.votingsessionservice.entity.AssociateEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEntity;
+import com.ericpinto.votingsessionservice.exception.DuplicateVoteException;
+import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
+import com.ericpinto.votingsessionservice.exception.VoteClosedException;
 import com.ericpinto.votingsessionservice.mapper.VoteMapper;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
 import com.ericpinto.votingsessionservice.repository.AssociateRepository;
@@ -31,8 +34,8 @@ public class VoteService {
     }
 
     public VoteResponse vote(String idAgenda, String associateId, VoteRequest request) {
-        AgendaEntity agenda = agendaRepository.findById(idAgenda).orElseThrow(() -> new RuntimeException("Agenda not found"));
-        AssociateEntity associate = associateRepository.findById(associateId).orElseThrow(() -> new RuntimeException("Associate not found"));
+        AgendaEntity agenda = agendaRepository.findById(idAgenda).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
+        AssociateEntity associate = associateRepository.findById(associateId).orElseThrow(() -> new EntityNotFoundException("Associate not found"));
 
         validateAgendaAndVote(agenda, associate);
 
@@ -47,14 +50,14 @@ public class VoteService {
 
     private void validateAgendaAndVote(AgendaEntity agenda, AssociateEntity associate){
         if (LocalDateTime.now().isAfter(agenda.getEndTime())){
-            throw new RuntimeException("Agenda is no longer open for voting");
+            throw new VoteClosedException("Agenda is no longer open for voting");
         }
 
         boolean alreadyVoted = agenda.getVoteEntity().stream()
                 .anyMatch(vote -> vote.getAssociate().equals(associate));
 
         if (alreadyVoted) {
-            throw new RuntimeException("Associate has already voted on this agenda");
+            throw new DuplicateVoteException("Associate has already voted on this agenda");
         }
     }
 
