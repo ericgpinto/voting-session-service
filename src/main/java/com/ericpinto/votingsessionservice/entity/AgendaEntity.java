@@ -1,6 +1,7 @@
 package com.ericpinto.votingsessionservice.entity;
 
 import com.ericpinto.votingsessionservice.exception.VoteClosedException;
+import com.ericpinto.votingsessionservice.request.AgendaRegisterRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,19 @@ public class AgendaEntity {
     private LocalDateTime voteClosingTime;
     @DBRef
     private List<VoteEntity> votes = new ArrayList<>();
+
+
+    public static AgendaEntity create(AgendaRegisterRequest request) {
+        return AgendaEntity.builder()
+                .title(request.title())
+                .description(request.description())
+                .build();
+
+    }
+
+    public void addVote(VoteEntity vote) {
+        getVotes().add(vote);
+    }
 
     public void validate(AgendaEntity agenda){
         if (LocalDateTime.now().isAfter(agenda.getVoteClosingTime())){

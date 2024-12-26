@@ -23,20 +23,30 @@ public class AgendaService {
     }
 
     public AgendaRegisterResponse create(AgendaRegisterRequest agendaRegisterRequest) {
-        AgendaEntity agenda = agendaRepository.save(AgendaMapper.toEntity(agendaRegisterRequest));
-        return AgendaMapper.toResponse(agenda);
+        AgendaEntity agendaEntity = AgendaEntity.create(agendaRegisterRequest);
+
+        agendaRepository.save(agendaEntity);
+
+        return AgendaMapper.toResponse(agendaEntity);
     }
 
     public AgendaVotingSessionResponse openSessionToVote(String id) {
-        AgendaEntity agenda = agendaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
+        AgendaEntity agenda = getById(id);
         agenda.setVoteOpeningTime(LocalDateTime.now());
         agenda.setVoteClosingTime(LocalDateTime.now().plusHours(1));
 
-        return AgendaMapper.toVotingSessionResponse(agendaRepository.save(agenda));
+        agendaRepository.save(agenda);
+
+        return AgendaMapper.toVotingSessionResponse(agenda);
+
+    }
+
+    private AgendaEntity getById(String id) {
+        return agendaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
     }
 
     public AgendaVoteResultResponse getResult(String id){
-        AgendaEntity agenda = agendaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
+        AgendaEntity agenda = getById(id);
 
         Long countingYesVotes = agenda.getVotes().stream().filter((vote) -> vote.getVote() ==  VoteEnum.YES).count();
         Long countingNoVotes = agenda.getVotes().stream().filter((vote) -> vote.getVote() == VoteEnum.NO).count();
@@ -49,8 +59,5 @@ public class AgendaService {
                 countingYesVotes,
                 countingNoVotes
         );
-
-
     }
-
 }
