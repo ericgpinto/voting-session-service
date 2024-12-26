@@ -2,6 +2,7 @@ package com.ericpinto.votingsessionservice.api.controller;
 
 import com.ericpinto.votingsessionservice.request.AgendaRegisterRequest;
 import com.ericpinto.votingsessionservice.response.AgendaRegisterResponse;
+import com.ericpinto.votingsessionservice.response.AgendaVoteResultResponse;
 import com.ericpinto.votingsessionservice.response.AgendaVotingSessionResponse;
 import com.ericpinto.votingsessionservice.service.AgendaService;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,11 @@ public class AgendaController {
     public ResponseEntity<AgendaVotingSessionResponse> openVoting(@PathVariable String id) {
         AgendaVotingSessionResponse response = agendaService.openSessionToVote(id);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/result")
+    public ResponseEntity<AgendaVoteResultResponse> getResult(@PathVariable String id) {
+        return ResponseEntity.ok(agendaService.getResult(id));
     }
 
 }
