@@ -1,5 +1,6 @@
 package com.ericpinto.votingsessionservice.entity;
 
+import com.ericpinto.votingsessionservice.exception.DuplicateVoteException;
 import com.ericpinto.votingsessionservice.request.VoteRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,11 +25,22 @@ public class VoteEntity {
     private AssociateEntity associate;
     private LocalDateTime createdAt;
 
-    public static VoteEntity create(VoteRequest request, AssociateEntity associate){
-        return VoteEntity.builder()
+    public static VoteEntity create(VoteRequest request, AgendaEntity agenda, AssociateEntity associate){
+        validate(agenda, associate);
+
+        return  VoteEntity.builder()
                 .vote(VoteEnum.valueOf(request.vote()))
                 .associate(associate)
                 .createdAt(LocalDateTime.now())
                 .build();
+    }
+
+    public static void validate(AgendaEntity agenda, AssociateEntity associate){
+        boolean alreadyVoted = agenda.getVotes().stream()
+                .anyMatch(vote -> vote.getAssociate().equals(associate));
+
+        if (alreadyVoted) {
+            throw new DuplicateVoteException("Associate has already voted on this agenda");
+        }
     }
 }

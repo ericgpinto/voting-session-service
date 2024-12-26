@@ -37,28 +37,17 @@ public class VoteService {
         AgendaEntity agenda = agendaRepository.findById(idAgenda).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
         AssociateEntity associate = associateRepository.findById(associateId).orElseThrow(() -> new EntityNotFoundException("Associate not found"));
 
-        validateAgendaAndVote(agenda, associate);
+        agenda.validate(agenda);
 
-        VoteEntity vote = VoteEntity.create(request, associate);
+        VoteEntity vote = VoteEntity.create(request, agenda, associate);
         vote = voteRepository.save(vote);
 
-        agenda.getVoteEntity().add(vote);
+        agenda.getVotes().add(vote);
         agendaRepository.save(agenda);
 
        return VoteMapper.toResponse(vote);
     }
 
-    private void validateAgendaAndVote(AgendaEntity agenda, AssociateEntity associate){
-        if (LocalDateTime.now().isAfter(agenda.getEndTime())){
-            throw new VoteClosedException("Agenda is no longer open for voting");
-        }
 
-        boolean alreadyVoted = agenda.getVoteEntity().stream()
-                .anyMatch(vote -> vote.getAssociate().equals(associate));
-
-        if (alreadyVoted) {
-            throw new DuplicateVoteException("Associate has already voted on this agenda");
-        }
-    }
 
 }

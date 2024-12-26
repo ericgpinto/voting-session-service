@@ -1,5 +1,6 @@
 package com.ericpinto.votingsessionservice.entity;
 
+import com.ericpinto.votingsessionservice.exception.VoteClosedException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +25,16 @@ public class AgendaEntity {
     private String id;
     private String title;
     private String description;
-    private Boolean isOpenToVoting;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDateTime voteOpeningTime;
+    private LocalDateTime voteClosingTime;
     @DBRef
-    private List<VoteEntity> voteEntity = new ArrayList<>();
+    private List<VoteEntity> votes = new ArrayList<>();
+
+    public void validate(AgendaEntity agenda){
+        if (LocalDateTime.now().isAfter(agenda.getVoteClosingTime())){
+            throw new VoteClosedException("Agenda is no longer open for voting");
+        }
+    }
+
+
 }

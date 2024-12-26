@@ -1,6 +1,8 @@
 package com.ericpinto.votingsessionservice.service;
 
 import com.ericpinto.votingsessionservice.entity.AgendaEntity;
+import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
+import com.ericpinto.votingsessionservice.mapper.AgendaMapper;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
 import com.ericpinto.votingsessionservice.request.AgendaRegisterRequest;
 import com.ericpinto.votingsessionservice.response.AgendaRegisterResponse;
@@ -8,8 +10,6 @@ import com.ericpinto.votingsessionservice.response.AgendaVotingSessionResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-
-import static com.ericpinto.votingsessionservice.mapper.AgendaMapper.*;
 
 @Service
 public class AgendaService {
@@ -21,17 +21,16 @@ public class AgendaService {
     }
 
     public AgendaRegisterResponse create(AgendaRegisterRequest agendaRegisterRequest) {
-        AgendaEntity agenda = agendaRepository.save(toEntity(agendaRegisterRequest));
-        return toResponse(agenda);
+        AgendaEntity agenda = agendaRepository.save(AgendaMapper.toEntity(agendaRegisterRequest));
+        return AgendaMapper.toResponse(agenda);
     }
 
     public AgendaVotingSessionResponse openSessionToVote(String id) {
-        AgendaEntity agenda = agendaRepository.findById(id).orElseThrow(() -> new RuntimeException("Agenda not found"));
-        agenda.setIsOpenToVoting(true);
-        agenda.setStartTime(LocalDateTime.now());
-        agenda.setEndTime(LocalDateTime.now().plusHours(1));
+        AgendaEntity agenda = agendaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
+        agenda.setVoteOpeningTime(LocalDateTime.now());
+        agenda.setVoteClosingTime(LocalDateTime.now().plusHours(1));
 
-        return toVotingSessionResponse(agendaRepository.save(agenda));
+        return AgendaMapper.toVotingSessionResponse(agendaRepository.save(agenda));
     }
 
 }

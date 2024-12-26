@@ -29,9 +29,8 @@ public class AgendaMapper {
                 entity.getId(),
                 entity.getTitle(),
                 entity.getDescription(),
-                entity.getIsOpenToVoting(),
-                entity.getStartTime(),
-                entity.getEndTime()
+                entity.getVoteOpeningTime(),
+                entity.getVoteClosingTime()
         );
     }
 }

@@ -7,8 +7,7 @@ public record AgendaVotingSessionResponse(
         String id,
         String title,
         String description,
-        Boolean isOpenToVoting,
-        LocalDateTime startTime,
-        LocalDateTime endTime
+        LocalDateTime voteOpeningTime,
+        LocalDateTime voteClosingTime
 ) {
 }
