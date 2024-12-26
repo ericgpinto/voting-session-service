@@ -5,6 +5,9 @@ import com.ericpinto.votingsessionservice.request.AgendaRegisterRequest;
 import com.ericpinto.votingsessionservice.response.AgendaRegisterResponse;
 import com.ericpinto.votingsessionservice.response.AgendaVoteResultResponse;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 public class AgendaStub {
 
     private static final String ID = "676d864a196e5d4f3d6cbaa5";
@@ -24,6 +27,9 @@ public class AgendaStub {
                 .id(ID)
                 .title(TITLE)
                 .description(DESCRIPTION)
+                .voteOpeningTime(LocalDateTime.now())
+                .voteClosingTime(LocalDateTime.now().plusHours(1))
+                .votes(new ArrayList<>())
                 .build();
     }
 
@@ -32,6 +38,8 @@ public class AgendaStub {
                 .id(ID)
                 .title("Title")
                 .description("Description")
+                .voteOpeningTime(LocalDateTime.now())
+                .voteClosingTime(LocalDateTime.now().plusHours(1))
                 .votes(VoteStub.createVotes())
                 .build();
     }

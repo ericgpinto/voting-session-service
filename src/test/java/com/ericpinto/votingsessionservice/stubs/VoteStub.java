@@ -3,6 +3,7 @@ package com.ericpinto.votingsessionservice.stubs;
 import com.ericpinto.votingsessionservice.entity.AssociateEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEnum;
+import com.ericpinto.votingsessionservice.request.VoteRequest;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class VoteStub {
         return VoteEntity.builder()
                 .id("676d8664196e5d4f3d6cbaa6")
                 .vote(VoteEnum.YES)
-                .associate(new AssociateEntity("676c4855df73fcce481d24d0", "Associate 1", "14515180053"))
+                .associate(AssociateStub.createAssociateEntity())
                 .build();
     }
 
@@ -31,5 +32,9 @@ public class VoteStub {
                         .build()
 
         );
+    }
+
+    public static VoteRequest createVoteRequest(){
+        return new VoteRequest("YES");
     }
 }
