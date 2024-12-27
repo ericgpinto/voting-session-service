@@ -6,12 +6,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @Builder
 public class AgendaEntity {
 
+    private static final Logger log = LoggerFactory.getLogger(AgendaEntity.class);
     @Id
     private String id;
     private String title;
@@ -46,6 +48,7 @@ public class AgendaEntity {
 
     public void validate(AgendaEntity agenda){
         if (LocalDateTime.now().isAfter(agenda.getVoteClosingTime())){
+            log.error("Error when trying to vote on agenda {}", agenda.getId());
             throw new VoteClosedException("Agenda is no longer open for voting");
         }
     }

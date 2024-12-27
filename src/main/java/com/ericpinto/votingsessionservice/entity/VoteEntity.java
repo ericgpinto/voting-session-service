@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class VoteEntity {
+    private static final Logger log = LoggerFactory.getLogger(VoteEntity.class);
     @Id
     private String id;
     @Field
@@ -42,6 +45,7 @@ public class VoteEntity {
                 .anyMatch(vote -> vote.getAssociate().equals(associate));
 
         if (alreadyVoted) {
+            log.error("Associated has already voted");
             throw new DuplicateVoteException("Associate has already voted on this agenda");
         }
     }

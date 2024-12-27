@@ -10,11 +10,14 @@ import com.ericpinto.votingsessionservice.repository.AssociateRepository;
 import com.ericpinto.votingsessionservice.repository.VoteRepository;
 import com.ericpinto.votingsessionservice.request.VoteRequest;
 import com.ericpinto.votingsessionservice.response.VoteResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VoteService {
 
+    private static final Logger log = LoggerFactory.getLogger(VoteService.class);
     private final VoteRepository voteRepository;
     private final AgendaRepository agendaRepository;
     private final AssociateRepository associateRepository;
@@ -29,16 +32,25 @@ public class VoteService {
 
     public VoteResponse vote(String idAgenda, String associateId, VoteRequest request) {
         AgendaEntity agenda = agendaRepository.findById(idAgenda).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
+        log.info("Creating vote to agenda {}.", agenda.getId());
+
         agenda.validate(agenda);
 
-        AssociateEntity associate = associateRepository.findById(associateId).orElseThrow(() -> new EntityNotFoundException("Associate not found"));
+        AssociateEntity associate = associateRepository.findById(associateId)
+                .orElseThrow(() ->
+                {
+                    log.error("Associate with id {} not found.", associateId);
+                    return new EntityNotFoundException("Associate not found");
+                });
 
         VoteEntity vote = VoteEntity.create(request, agenda, associate);
         voteRepository.save(vote);
 
+        log.info("Saving vote {} to agenda", vote.getId());
         agenda.addVote(vote);
         agendaRepository.save(agenda);
 
+        log.info("Vote created with successfully.");
        return VoteMapper.toResponse(vote);
     }
 
