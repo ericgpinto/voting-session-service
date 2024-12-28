@@ -12,8 +12,8 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Minha API")
+                        .title("API - Votação em Pautas")
                         .version("1.0")
-                        .description("Descrição da minha API"));
+                        .description("APIs disponibilizadas para associados votarem em Pautas."));
     }
 }

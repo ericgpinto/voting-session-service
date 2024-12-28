@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/votes")
-@Tag(name = "API de Votos")
+@Tag(name = "API de Votações")
 public class VoteController {
 
     private final VoteService voteService;
