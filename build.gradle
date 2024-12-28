@@ -50,3 +50,7 @@ dependencyManagement {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.bootJar {
+	archiveFileName = 'voting-session-service.jar'
+}
