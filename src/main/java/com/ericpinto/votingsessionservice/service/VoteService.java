@@ -3,6 +3,7 @@ package com.ericpinto.votingsessionservice.service;
 import com.ericpinto.votingsessionservice.entity.AgendaEntity;
 import com.ericpinto.votingsessionservice.entity.AssociateEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEntity;
+import com.ericpinto.votingsessionservice.entity.VoteEnum;
 import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
 import com.ericpinto.votingsessionservice.mapper.VoteMapper;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
@@ -30,7 +31,7 @@ public class VoteService {
         this.associateRepository = associateRepository;
     }
 
-    public VoteResponse vote(String idAgenda, String associateId, VoteRequest request) {
+    public VoteResponse create(String idAgenda, String associateId, VoteRequest request) {
         AgendaEntity agenda = agendaRepository.findById(idAgenda).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
         log.info("Creating vote to agenda {}.", agenda.getId());
 

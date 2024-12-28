@@ -57,3 +57,10 @@ tasks.named('test') {
 tasks.bootJar {
 	archiveFileName = 'voting-session-service.jar'
 }
+
+tasks.test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}

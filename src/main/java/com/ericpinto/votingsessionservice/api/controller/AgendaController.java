@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class AgendaController {
                     content = @Content(schema = @Schema(implementation = AgendaRegisterResponse.class))),
     })
     @PostMapping("/register")
-    public ResponseEntity<AgendaRegisterResponse> register(@RequestBody AgendaRegisterRequest agendaRegisterRequest) {
+    public ResponseEntity<AgendaRegisterResponse> register(@Valid @RequestBody AgendaRegisterRequest agendaRegisterRequest) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(agendaService.create(agendaRegisterRequest));

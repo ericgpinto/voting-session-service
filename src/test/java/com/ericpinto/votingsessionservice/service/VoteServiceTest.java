@@ -13,7 +13,6 @@ import static com.ericpinto.votingsessionservice.stubs.VoteStub.*;
 import com.ericpinto.votingsessionservice.response.VoteResponse;
 import com.ericpinto.votingsessionservice.stubs.AgendaStub;
 import com.ericpinto.votingsessionservice.stubs.AssociateStub;
-import com.ericpinto.votingsessionservice.stubs.VoteStub;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,19 +48,19 @@ class VoteServiceTest {
     void shouldThrowExceptionIfAgendaNotFound() {
         when(agendaRepository.findById(AGENDA_ID)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> voteService.vote(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> voteService.create(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
 
         assertEquals("Agenda not found", exception.getMessage());
     }
 
     @Test
-    void shouldThrowExceptionIfVoteAreClosed(){
+    void shouldThrowExceptionIfCreateAreClosed(){
         AgendaEntity agenda = AgendaStub.createAgendaEntity();
         agenda.setVoteClosingTime(LocalDateTime.now());
 
         when(agendaRepository.findById(AGENDA_ID)).thenReturn(Optional.of(agenda));
 
-        Exception exception = assertThrows(VoteClosedException.class, () -> voteService.vote(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
+        Exception exception = assertThrows(VoteClosedException.class, () -> voteService.create(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
 
         assertEquals("Agenda is no longer open for voting", exception.getMessage());
     }
@@ -71,29 +70,29 @@ class VoteServiceTest {
         when(agendaRepository.findById(AGENDA_ID)).thenReturn(Optional.of(AgendaStub.createAgendaEntity()));
         when(associateRepository.findById(ASSOCIATE_ID)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(EntityNotFoundException.class, () -> voteService.vote(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
+        Exception exception = assertThrows(EntityNotFoundException.class, () -> voteService.create(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
 
         assertEquals("Associate not found", exception.getMessage());
     }
 
     @Test
-    void shouldThrowExceptionIfVoteIsDuplicate() {
+    void shouldThrowExceptionIfCreateIsDuplicate() {
         when(agendaRepository.findById(AGENDA_ID)).thenReturn(Optional.of(AgendaStub.createAgendaEntityWithVotes()));
         when(associateRepository.findById(ASSOCIATE_ID)).thenReturn(Optional.of(AssociateStub.createAssociateEntity()));
 
-        Exception exception = assertThrows(DuplicateVoteException.class, () -> voteService.vote(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
+        Exception exception = assertThrows(DuplicateVoteException.class, () -> voteService.create(AGENDA_ID, ASSOCIATE_ID, createVoteRequest()));
 
         assertEquals("Associate has already voted on this agenda", exception.getMessage());
     }
 
     @Test
-    void shouldCreateVote() {
+    void shouldCreateCreate() {
         when(agendaRepository.findById(AGENDA_ID)).thenReturn(Optional.of(AgendaStub.createAgendaEntity()));
         when(associateRepository.findById(ASSOCIATE_ID)).thenReturn(Optional.of(AssociateStub.createAssociateEntity()));
         when(voteRepository.save(any(VoteEntity.class))).thenReturn(createVote());
         when(agendaRepository.save(any(AgendaEntity.class))).thenReturn(AgendaStub.createAgendaEntity());
 
-        VoteResponse response = voteService.vote(AGENDA_ID, ASSOCIATE_ID, createVoteRequest());
+        VoteResponse response = voteService.create(AGENDA_ID, ASSOCIATE_ID, createVoteRequest());
 
         assertNotNull(response);
 

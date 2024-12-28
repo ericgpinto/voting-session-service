@@ -41,6 +41,7 @@ public class AgendaService {
     public AgendaVotingSessionResponse openSessionToVote(String id) {
         log.info("Opening session to vote for agenda.");
         AgendaEntity agenda = getById(id);
+
         agenda.setVoteOpeningTime(LocalDateTime.now());
         agenda.setVoteClosingTime(LocalDateTime.now().plusHours(1));
 
