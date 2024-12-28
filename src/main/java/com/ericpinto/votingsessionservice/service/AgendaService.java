@@ -4,6 +4,7 @@ import com.ericpinto.votingsessionservice.entity.AgendaEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEnum;
 import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
 import com.ericpinto.votingsessionservice.mapper.AgendaMapper;
+import com.ericpinto.votingsessionservice.producer.RabbitMQProducer;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
 import com.ericpinto.votingsessionservice.request.AgendaRegisterRequest;
 import com.ericpinto.votingsessionservice.response.AgendaRegisterResponse;
@@ -20,9 +21,11 @@ public class AgendaService {
 
     private static final Logger log = LoggerFactory.getLogger(AgendaService.class);
     private final AgendaRepository agendaRepository;
+    private final RabbitMQProducer producer;
 
-    public AgendaService(AgendaRepository agendaRepository) {
+    public AgendaService(AgendaRepository agendaRepository, RabbitMQProducer producer) {
         this.agendaRepository = agendaRepository;
+        this.producer = producer;
     }
 
     public AgendaRegisterResponse create(AgendaRegisterRequest agendaRegisterRequest) {
@@ -56,14 +59,16 @@ public class AgendaService {
         });
     }
 
-    public AgendaVoteResultResponse getResult(String id){
+    public AgendaVoteResultResponse countingVotes(String id) {
+        log.info("Counting votes for agenda.");
+
         AgendaEntity agenda = getById(id);
         log.info("Getting result for agenda {}.", agenda.getId());
 
         Long countingYesVotes = agenda.getVotes().stream().filter((vote) -> vote.getVote() ==  VoteEnum.YES).count();
         Long countingNoVotes = agenda.getVotes().stream().filter((vote) -> vote.getVote() == VoteEnum.NO).count();
 
-        return new AgendaVoteResultResponse(
+        AgendaVoteResultResponse response = new AgendaVoteResultResponse(
                 agenda.getId(),
                 agenda.getTitle(),
                 agenda.getDescription(),
@@ -71,5 +76,8 @@ public class AgendaService {
                 countingYesVotes,
                 countingNoVotes
         );
+
+        producer.send(response);
+        return response;
     }
 }

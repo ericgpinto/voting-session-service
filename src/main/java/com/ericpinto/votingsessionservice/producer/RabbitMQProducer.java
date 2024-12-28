@@ -16,9 +16,9 @@ public class RabbitMQProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    public void send(String message) {
+    public void send(Object message) {
         log.info("Sending message: {}", message);
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_VOTING_SESSION, "routingKey", message);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_VOTING_SESSION, "routing_key", message);
         log.info("Sent message: {}", message);
     }
 }

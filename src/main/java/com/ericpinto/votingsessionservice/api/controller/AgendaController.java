@@ -32,9 +32,9 @@ public class AgendaController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}/result")
-    public ResponseEntity<AgendaVoteResultResponse> getResult(@PathVariable String id) {
-        return ResponseEntity.ok(agendaService.getResult(id));
+    @GetMapping("/{id}/counting-votes")
+    public ResponseEntity<AgendaVoteResultResponse> getCountingVotes(@PathVariable String id) {
+        return ResponseEntity.ok(agendaService.countingVotes(id));
     }
 
 }

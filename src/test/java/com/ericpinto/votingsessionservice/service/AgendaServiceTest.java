@@ -2,6 +2,7 @@ package com.ericpinto.votingsessionservice.service;
 
 import com.ericpinto.votingsessionservice.entity.AgendaEntity;
 import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
+import com.ericpinto.votingsessionservice.producer.RabbitMQProducer;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
 import com.ericpinto.votingsessionservice.response.AgendaRegisterResponse;
 import com.ericpinto.votingsessionservice.response.AgendaVoteResultResponse;
@@ -23,6 +24,9 @@ class AgendaServiceTest {
 
     @Mock
     private AgendaRepository agendaRepository;
+
+    @Mock
+    private RabbitMQProducer producer;
 
     @InjectMocks
     private AgendaService agendaService;
@@ -61,16 +65,17 @@ class AgendaServiceTest {
     }
 
     @Test
-    void shouldGetResult(){
+    void shouldCountingVotes(){
         when(agendaRepository.findById(ID)).thenReturn(Optional.of(createAgendaEntityWithVotes()));
 
-        AgendaVoteResultResponse response = agendaService.getResult(ID);
+        AgendaVoteResultResponse response = agendaService.countingVotes(ID);
 
         assertNotNull(response);
 
         assertEquals(3, response.totalVotes());
         assertEquals(2, response.countingYesVotes());
         assertEquals(1, response.countingNoVotes());
-    }
 
+        verify(producer, times(1)).send(any());
+    }
 }

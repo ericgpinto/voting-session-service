@@ -1,14 +1,9 @@
 spring:
   application:
     name: voting-session-service
-
   data:
     mongodb:
-      host: localhost
-      port: 27017
-      database: voting-session-db
-
-
+      uri: ${MONGODB_URI}
   rabbitmq:
     host: localhost
     port: 5672
