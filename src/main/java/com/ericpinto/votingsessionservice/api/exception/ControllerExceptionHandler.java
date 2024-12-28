@@ -2,6 +2,7 @@ package com.ericpinto.votingsessionservice.api.exception;
 
 import com.ericpinto.votingsessionservice.exception.DuplicateVoteException;
 import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
+import com.ericpinto.votingsessionservice.exception.EnumConstantException;
 import com.ericpinto.votingsessionservice.exception.VoteClosedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,14 @@ public class ControllerExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(EnumConstantException.class)
+    public ResponseEntity<CustomError> handleEnumConstantException(EnumConstantException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(CustomError.builder()
+                        .message(e.getMessage())
+                        .build());
     }
 
     @ExceptionHandler({DuplicateVoteException.class, VoteClosedException.class})

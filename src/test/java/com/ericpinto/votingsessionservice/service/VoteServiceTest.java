@@ -4,12 +4,14 @@ import com.ericpinto.votingsessionservice.entity.AgendaEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEntity;
 import com.ericpinto.votingsessionservice.exception.DuplicateVoteException;
 import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
+import com.ericpinto.votingsessionservice.exception.EnumConstantException;
 import com.ericpinto.votingsessionservice.exception.VoteClosedException;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
 import com.ericpinto.votingsessionservice.repository.AssociateRepository;
 import com.ericpinto.votingsessionservice.repository.VoteRepository;
 import static com.ericpinto.votingsessionservice.stubs.VoteStub.*;
 
+import com.ericpinto.votingsessionservice.request.VoteRequest;
 import com.ericpinto.votingsessionservice.response.VoteResponse;
 import com.ericpinto.votingsessionservice.stubs.AgendaStub;
 import com.ericpinto.votingsessionservice.stubs.AssociateStub;
@@ -43,6 +45,14 @@ class VoteServiceTest {
 
     private static final String AGENDA_ID = "676d864a196e5d4f3d6cbaa5";
     private static final String ASSOCIATE_ID = "676c4855df73fcce481d24d0";
+
+    @Test
+    void shouldThrowExceptionWhenNoEnumConstant(){
+        VoteRequest voteRequest = new VoteRequest("VOTE");
+        Exception exception = assertThrows(EnumConstantException.class, () -> voteService.create(AGENDA_ID, ASSOCIATE_ID, voteRequest));
+
+        assertEquals("No enum constant VOTE", exception.getMessage());
+    }
 
     @Test
     void shouldThrowExceptionIfAgendaNotFound() {

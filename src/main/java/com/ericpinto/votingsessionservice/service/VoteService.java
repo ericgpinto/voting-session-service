@@ -5,6 +5,7 @@ import com.ericpinto.votingsessionservice.entity.AssociateEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEntity;
 import com.ericpinto.votingsessionservice.entity.VoteEnum;
 import com.ericpinto.votingsessionservice.exception.EntityNotFoundException;
+import com.ericpinto.votingsessionservice.exception.EnumConstantException;
 import com.ericpinto.votingsessionservice.mapper.VoteMapper;
 import com.ericpinto.votingsessionservice.repository.AgendaRepository;
 import com.ericpinto.votingsessionservice.repository.AssociateRepository;
@@ -32,6 +33,11 @@ public class VoteService {
     }
 
     public VoteResponse create(String idAgenda, String associateId, VoteRequest request) {
+        if (!isValidEnumValue(request.vote())) {
+            log.error("No enum constant {}", request.vote());
+            throw new EnumConstantException("No enum constant " + request.vote());
+        }
+
         AgendaEntity agenda = agendaRepository.findById(idAgenda).orElseThrow(() -> new EntityNotFoundException("Agenda not found"));
         log.info("Creating vote to agenda {}.", agenda.getId());
 
@@ -53,6 +59,15 @@ public class VoteService {
 
         log.info("Vote created with successfully.");
        return VoteMapper.toResponse(vote);
+    }
+
+    private static boolean isValidEnumValue(String value) {
+        for (Enum<?> enumValue : ((Class<? extends Enum<?>>) VoteEnum.class).getEnumConstants()) {
+            if (enumValue.name().equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
