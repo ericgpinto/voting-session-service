@@ -6,8 +6,8 @@ spring:
 #      uri: mongodb+srv://root:T5SQVhMXftV62I2h@personal-cluster.up7z6.mongodb.net/voting_service_db?retryWrites=true&w=majority&appName=personal-cluster
       uri: ${MONGODB_URI}
   rabbitmq:
-    host: ${CLOUDAMQP_URL}
-#    host: localhost
-#    port: 5672
-#    username: guest
-#    password: guest
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USERNAME}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: ${RABBITMQ_VHOST}
