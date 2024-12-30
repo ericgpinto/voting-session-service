@@ -9,6 +9,7 @@ public class AssociateMapper {
 
     public static AssociateResponse toResponse(AssociateEntity associateEntity) {
         return new AssociateResponse(
+                associateEntity.getId(),
                 associateEntity.getName(),
                 associateEntity.getLegalDocumentNumber()
         );

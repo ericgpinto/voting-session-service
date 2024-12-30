@@ -1,7 +1,10 @@
 package com.ericpinto.votingsessionservice.api.controller;
 
 import com.ericpinto.votingsessionservice.api.exception.CustomError;
+import com.ericpinto.votingsessionservice.mapper.AssociateMapper;
+import com.ericpinto.votingsessionservice.repository.AssociateRepository;
 import com.ericpinto.votingsessionservice.request.VoteRequest;
+import com.ericpinto.votingsessionservice.response.AssociateResponse;
 import com.ericpinto.votingsessionservice.response.VoteResponse;
 import com.ericpinto.votingsessionservice.service.VoteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,15 +18,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/votes")
 @Tag(name = "API de Votações")
 public class VoteController {
 
     private final VoteService voteService;
+    private final AssociateRepository associateRepository;
 
-    public VoteController(VoteService voteService) {
+    public VoteController(VoteService voteService, AssociateRepository associateRepository) {
         this.voteService = voteService;
+        this.associateRepository = associateRepository;
     }
 
     @Operation(summary = "Votar em uma pauta")
@@ -38,5 +45,11 @@ public class VoteController {
                                                       @PathVariable String associateId,
                                                       @Valid @RequestBody VoteRequest voteRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(voteService.create(agendaId, associateId, voteRequest));
+    }
+
+    @Operation(summary = "Listar associados")
+    @GetMapping("/associates")
+    public ResponseEntity<List<AssociateResponse>> getAssociates() {
+        return ResponseEntity.ok(associateRepository.findAll().stream().map(AssociateMapper::toResponse).toList());
     }
 }
