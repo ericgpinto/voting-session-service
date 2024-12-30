@@ -2,14 +2,16 @@
 
 ## Descrição
 
-#### A ideia deste projeto é desenvolver uma API REST de votações em pautas.
+#### A ideia deste projeto é desenvolver uma API REST de votações em pautas.'
 
+## Deploy
+####  O deploy da aplicação foi feito através do Heroku: https://heroku.com
 #### Documentação da API: https://voting-session-app-91509019c1e2.herokuapp.com/custom-swagger-ui
 
 ## Execução do projeto em ambiente local
 #### Para garantir que a aplicação execute perfeitamente em ambiente local, é necessário seguir os passos a baixo.
 - **MongoDB e RabbitMQ**
-  - Alterar o arquivo application.yml, pois esta configurado para usar variaveis de ambiente vindas do ambiente de deploy.
+  - Certificar que o arquivo application.yml esta apontando para ambiente local como no exemplo a baixo.
 
 
              ```
@@ -60,7 +62,14 @@
     ```
 
 #### Após realizar os passos acima, execute a aplicação.
-    
+
+## Testes
+#### Para garantir a qualidade da aplicação, foram implementados alguns testes.
+#### Execute o comando a baixo para rodar todos os testes 
+```
+./gradlew test
+   ```
+
 ## Funcionalidades do Projeto
 
 - Cadastro de pautas
